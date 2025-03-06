@@ -75,7 +75,7 @@ setAlarmButton.addEventListener("click", () => {
     const numberRegex = /^\d{1,2}$/;
 
     if (!numberRegex.test(hourValue) || !numberRegex.test(minuteValue)) {
-        alert("Please enter only numbers (1-2 digits) for HH and MM.");
+        errorMessage.textContent = "Please enter only numbers for HH and MM.";
         clearInputs();
         return;
     }
@@ -92,6 +92,15 @@ setAlarmButton.addEventListener("click", () => {
         errorMessage.textContent = "Minutes must be between 0 and 59.";
         return;
     }
+
+    const now = new Date();
+    let alarmDate = new Date();
+    alarmDate.setHours(hour, minute, 0, 0);
+
+    if (alarmDate <= now) {
+        alarmDate.setDate(alarmDate.getDate() + 1);
+    }
+
     errorMessage.textContent = "";
     alarmTime = formatTime(hour, minute);
     setAlarm(alarmTime);
