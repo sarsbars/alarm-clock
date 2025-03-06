@@ -6,6 +6,7 @@ body {
 
 .container {
     width: min(100% - 40px, 1080px);
+    margin-top: 150px;
     margin-inline: auto;
     display: grid;
     place-items: center;
@@ -77,4 +78,13 @@ form button {
 
 form button:hover {
     background-color: #0056b3;
+}
+
+form input {
+    border: 1.5px solid #6a6a6a;
+
+}
+
+form input:focus {
+    border: 1.5px solid #1b8e43;
 }

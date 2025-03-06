@@ -72,10 +72,8 @@ inputs.forEach(input => {
 setAlarmButton.addEventListener("click", () => {
     const hourValue = hourInput.value.trim();
     const minuteValue = minuteInput.value.trim();
-    const numberRegex = /^\d{1,2}$/;
 
-    if (!numberRegex.test(hourValue) || !numberRegex.test(minuteValue)) {
-        errorMessage.textContent = "Please enter only numbers for HH and MM.";
+    if (!validateTime(hourValue, minuteValue)) {
         clearInputs();
         return;
     }
@@ -83,27 +81,52 @@ setAlarmButton.addEventListener("click", () => {
     const hour = parseInt(hourValue, 10);
     const minute = parseInt(minuteValue, 10);
 
-    if (hour < 0 || hour > 23) {
-        errorMessage.textContent = "Hour must be between 0 and 23.";
+    if (!isValidHour(hour) || !isValidMinute(minute)) {
+        clearInputs();
         return;
     }
 
-    if (minute < 0 || minute > 59) {
-        errorMessage.textContent = "Minutes must be between 0 and 59.";
-        return;
-    }
-
-    const now = new Date();
-    let alarmDate = new Date();
-    alarmDate.setHours(hour, minute, 0, 0);
-
-    if (alarmDate <= now) {
-        alarmDate.setDate(alarmDate.getDate() + 1);
-    }
-
-    errorMessage.textContent = "";
+    const alarmDate = calculateAlarmDate(hour, minute);
     alarmTime = formatTime(hour, minute);
     setAlarm(alarmTime);
     alarmSet = true;
     clearInputs();
 });
+
+function validateTime(hourValue, minuteValue) {
+    const numberRegex = /^\d{1,2}$/;
+
+    if (!numberRegex.test(hourValue) || !numberRegex.test(minuteValue)) {
+        errorMessage.textContent = "Please enter only numbers for HH and MM.";
+        return false;
+    }
+    return true;
+}
+
+function isValidHour(hour) {
+    if (hour < 0 || hour > 23) {
+        errorMessage.textContent = "Hour must be between 0 and 23.";
+        return false;
+    }
+    return true;
+}
+
+function isValidMinute(minute) {
+    if (minute < 0 || minute > 59) {
+        errorMessage.textContent = "Minutes must be between 0 and 59.";
+        return false;
+    }
+    return true;
+}
+
+function calculateAlarmDate(hour, minute) {
+    const now = new Date();
+    let alarmDate = new Date();
+    alarmDate.setHours(hour, minute, 0, 0);
+
+    if (alarmDate <= now) {
+        alarmDate.setDate(alarmDate.getDate() + 1); 
+    }
+
+    return alarmDate;
+}
