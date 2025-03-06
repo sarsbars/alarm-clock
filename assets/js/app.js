@@ -6,12 +6,12 @@ const minuteInput = form.querySelector("input:nth-of-type(2)");
 const setAlarmButton = form.querySelector("button");
 const inputs = [hourInput, minuteInput];
 const displayAlarm = document.querySelector(".displayAlarm p");
-const h1 = document.querySelector("h1");
+const timeDisplay = document.querySelector("h1");
 const errorMessage = document.querySelector(".error-message");
 
 let alarmSet = false;
 let alarmTime = "";
-
+let alarmDate = null;
 /* - - - - - - - - - - - - - - - - - - - - -*/
 /* -  - - - - - Functions - - - - - - - - - */
 /* - - - - - - - - - - - - - - - - - - - - -*/
@@ -34,12 +34,12 @@ function formatTime(hour, minute) {
 function playAlarm() {
     const alarmSound = new Audio("./assets/media/alarm.mp3");
     alarmSound.play();
-    h1.classList.toggle("green");
+    timeDisplay.classList.toggle("green");
     
     //I looked up on W3 how to use setTimeout so the h1 would be green for the 
     //duration of the alarm sound
     setTimeout(() => {
-        h1.classList.remove("green");
+        timeDisplay.classList.remove("green");
     }, 8500);
     alarmSet = false;
 }
@@ -49,12 +49,18 @@ setInterval(() => {
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
 
-    h1.textContent = `${hours}:${minutes}`;
+    timeDisplay.textContent = `${hours}:${minutes}`;
 
-    if (alarmSet && `${hours}:${minutes}` === alarmTime) {
+//I had to look up how to split up this following line by operators
+    if (
+        alarmSet && 
+        `${hours}:${minutes}` === alarmTime && 
+        alarmDate && 
+        now >= alarmDate
+    ) {
         playAlarm();
     }
-}, 1000); 
+}, 1000);
 
 
 /* - - - - - - - - - - - - - - - - - - - -  - - - - - */
@@ -86,10 +92,20 @@ setAlarmButton.addEventListener("click", () => {
         return;
     }
 
-    const alarmDate = calculateAlarmDate(hour, minute);
+    const now = new Date();
+    const currentHours = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    let scheduledAlarmDate = calculateAlarmDate(hour, minute);
+    if (hour === currentHours && minute === currentMinutes) {
+        scheduledAlarmDate.setDate(scheduledAlarmDate.getDate() + 1);
+    }
+
+    alarmDate = scheduledAlarmDate; 
     alarmTime = formatTime(hour, minute);
     setAlarm(alarmTime);
     alarmSet = true;
+    errorMessage.textContent = ""; 
     clearInputs();
 });
 
@@ -122,10 +138,10 @@ function isValidMinute(minute) {
 function calculateAlarmDate(hour, minute) {
     const now = new Date();
     let alarmDate = new Date();
-    alarmDate.setHours(hour, minute, 0, 0);
+    alarmDate.setHours(hour, minute, 0, 0); 
 
-    if (alarmDate <= now) {
-        alarmDate.setDate(alarmDate.getDate() + 1); 
+    if (alarmDate.getTime() <= now.getTime()) {
+        alarmDate.setDate(alarmDate.getDate() + 1);
     }
 
     return alarmDate;
