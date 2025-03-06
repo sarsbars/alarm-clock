@@ -21,26 +21,42 @@ h1 {
     font-variant:tabular-nums;
 }
 
-i, p {
-    color: #f6f6f6;
-    font-size : 2rem;
-    margin-bottom: 10px;
+.green {
+    color:#1b8e43;
+    transition: color 1s ease-in-out;
 }
 
-p {
-    width: 85px;
-}
+
 .displayAlarm {
     display: flex;
     flex: center;
     gap: 5px;
     line-height: 12px;
+
+    i, p {
+        color: #f6f6f6;
+        font-size : 2rem;
+        margin-bottom: 20px;
+    }
+    
+    p {
+        width: 80px;
+    }
+}
+
+.error-message {
+    margin-top: 20px;
+    margin-left: 65px;
+    width: 320px;
+    font-size: 1.8rem;
+    color: #fff;
 }
 
 form {
     display: flex;
     gap: 10px;
 }
+
 form input,
 form button {
     font-size: 18px;
